@@ -3,6 +3,7 @@ __pycache__/
 unpackage/
 *.jks
 *.keystore
+signing/
 mitmproxy-*
 .DS_Store
 Thumbs.db
