@@ -1,73 +1,72 @@
 {
-  "@platforms": ["android"],
-  "id": "H52F1F20B",
-  "name": "大盘脉搏",
-  "version": {
-    "name": "1.0.0",
-    "code": "100"
-  },
-  "description": "个人使用的市场与板块强弱观察工具",
-  "icons": {
-    "72": "assets/icons/icon-72.png"
-  },
-  "launch_path": "index.html",
-  "permissions": {
-    "Storage": {
-      "description": "保存最近一次成功获取的行情快照"
+    "@platforms" : [ "android" ],
+    "id" : "H52F1F20B",
+    "name" : "大盘脉搏",
+    "version" : {
+        "name" : "1.0.0",
+        "code" : "100"
     },
-    "XMLHttpRequest": {
-      "description": "从云端读取每日行情快照"
+    "description" : "个人使用的市场与板块强弱观察工具",
+    "icons" : {
+        "72" : "assets/icons/icon-72.png"
     },
-    "Navigator": {
-      "description": "适配系统状态栏与屏幕方向"
-    }
-  },
-  "plus": {
-    "runmode": "normal",
-    "launchwebview": {
-      "contentAdjust": false
-    },
-    "splashscreen": {
-      "autoclose": true,
-      "waiting": false
-    },
-    "statusbar": {
-      "immersed": "supportedDevice",
-      "background": "#f2efe7",
-      "style": "dark"
-    },
-    "popGesture": "none",
-    "distribute": {
-      "google": {
-        "packagename": "com.personal.marketpulse",
-        "permissions": [
-          "<uses-permission android:name=\"android.permission.INTERNET\"/>",
-          "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>"
-        ]
-      },
-      "orientation": [
-        "portrait-primary",
-        "landscape-primary",
-        "landscape-secondary"
-      ],
-      "icons": {
-        "android": {
-          "ldpi": "assets/icons/icon-48.png",
-          "mdpi": "assets/icons/icon-48.png",
-          "hdpi": "assets/icons/icon-72.png",
-          "xhdpi": "assets/icons/icon-96.png",
-          "xxhdpi": "assets/icons/icon-144.png"
+    "launch_path" : "index.html",
+    "permissions" : {
+        "Storage" : {
+            "description" : "保存最近一次成功获取的行情快照"
+        },
+        "XMLHttpRequest" : {
+            "description" : "从云端读取每日行情快照"
+        },
+        "Navigator" : {
+            "description" : "适配系统状态栏与屏幕方向"
         }
-      },
-      "splashscreen": {
-        "android": {
-          "mdpi": "assets/splash/splash-240x282.png",
-          "ldpi": "assets/splash/splash-320x442.png",
-          "hdpi": "assets/splash/splash-480x762.png",
-          "xhdpi": "assets/splash/splash-720x1242.png",
-          "xxhdpi": "assets/splash/splash-1080x1882.png"
+    },
+    "plus" : {
+        "runmode" : "normal",
+        "launchwebview" : {
+            "contentAdjust" : false
+        },
+        "splashscreen" : {
+            "autoclose" : true,
+            "waiting" : false
+        },
+        "statusbar" : {
+            "immersed" : "supportedDevice",
+            "background" : "#f2efe7",
+            "style" : "dark"
+        },
+        "popGesture" : "none",
+        "distribute" : {
+            "google" : {
+                "packagename" : "com.personal.marketpulse",
+                "permissions" : [
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>"
+                ]
+            },
+            "orientation" : [ "portrait-primary", "landscape-primary", "landscape-secondary" ],
+            "icons" : {
+                "android" : {
+                    "ldpi" : "assets/icons/icon-48.png",
+                    "mdpi" : "assets/icons/icon-48.png",
+                    "hdpi" : "assets/icons/icon-72.png",
+                    "xhdpi" : "assets/icons/icon-96.png",
+                    "xxhdpi" : "assets/icons/icon-144.png"
+                }
+            },
+            "splashscreen" : {
+                "android" : {
+                    "mdpi" : "assets/splash/splash-240x282.png",
+                    "ldpi" : "assets/splash/splash-320x442.png",
+                    "hdpi" : "assets/splash/splash-480x762.png",
+                    "xhdpi" : "assets/splash/splash-720x1242.png",
+                    "xxhdpi" : "assets/splash/splash-1080x1882.png"
+                }
+            },
+            "ios" : {
+                "dSYMs" : false
+            }
         }
-      }
     }
-  }
 }
