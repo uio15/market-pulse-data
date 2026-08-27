@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2efe7">
+  <meta name="description" content="基于公开数据集和官方 MCP 自动更新的 A 股大盘状态看板">
+  <link rel="icon" href="data:,">
+  <title>大盘脉搏</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("market-dashboard-theme");
+      if (savedTheme === "dark" || savedTheme === "light") document.documentElement.dataset.theme = savedTheme;
+    } catch (_) {}
+  </script>
+  <link rel="stylesheet" href="assets/styles.css?v=22">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="masthead">
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div>
+          <p class="eyebrow">MARKET TAPE / 收盘</p>
+          <h1>大盘脉搏</h1>
+        </div>
+      </div>
+      <div class="session-zone">
+        <div class="session-meta">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="session-date">数据读取中</span>
+          <span class="source-tag" id="source-mode">公开数据集 + 官方 MCP</span>
+          <div class="theme-switch" role="group" aria-label="页面主题">
+            <button type="button" data-theme-option="light" aria-pressed="true">Light</button>
+            <button type="button" data-theme-option="dark" aria-pressed="false">Dark</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="page-tabs" aria-label="看板页面">
+      <button type="button" data-page="market" class="active" aria-pressed="true">大盘情况</button>
+      <button type="button" data-page="realtime" aria-pressed="false">实时看板</button>
+      <button type="button" data-page="funds" aria-pressed="false">基金情况</button>
+      <button type="button" data-page="boards" aria-pressed="false">板块总览</button>
+      <button type="button" data-page="futures" aria-pressed="false">期货主连</button>
+      <button type="button" data-page="value" aria-pressed="false">跟踪标的</button>
+      <button type="button" data-page="observe" aria-pressed="false">曲线观察</button>
+    </nav>
+
+    <nav class="market-subtabs" id="market-subtabs" aria-label="大盘情况子页面">
+      <button type="button" data-market-view="overview" class="active" aria-pressed="true">整体情况</button>
+      <button type="button" data-market-view="structure" aria-pressed="false">结构研究</button>
+    </nav>
+
+    <main id="market-page" class="page-view" hidden>
+      <section class="hero" aria-labelledby="market-title">
+        <div class="hero-copy">
+          <p class="section-kicker">MARKET PULSE</p>
+          <h2 id="market-title">大盘状态</h2>
+          <p class="hero-description">本页面未复刻（占位）。当前版本仅实现「基金情况」页完整功能。</p>
+        </div>
+      </section>
+    </main>
+
+    <section id="structure-page" class="page-view" aria-labelledby="structure-title" hidden>
+      <p class="section-kicker">STRUCTURE</p>
+      <h2 id="structure-title">结构研究</h2>
+      <p class="hero-description">本页面未复刻（占位）。当前版本仅实现「基金情况」页完整功能。</p>
+    </section>
+
+<section id="funds-page" class="page-view comparison-page" aria-labelledby="funds-title">
+      <section class="comparison-hero fund-hero">
+        <div>
+          <p class="section-kicker">FUND RADAR / RELATIVE STRENGTH</p>
+          <h2 id="funds-title">基金情况，按市场与行业比较</h2>
+          <p class="hero-note">A股行业使用申万一级近似映射；港股和海外选择常用代表 ETF。多选默认从 100 起步比较相对涨跌，单选可切换实际值。</p>
+        </div>
+        <div class="universe-count"><strong id="fund-available-count">--</strong><span>AVAILABLE SERIES</span></div>
+      </section>
+      <section class="panel universe-panel">
+        <div class="panel-head universe-head">
+          <div><p class="section-kicker">SELECT &amp; COMPARE</p><h2>ETF 多选比较</h2></div>
+          <div class="universe-tabs" aria-label="基金市场分类">
+            <button type="button" data-fund-group="a_share_industry" class="active" aria-pressed="true">A股行业</button>
+            <button type="button" data-fund-group="hong_kong" aria-pressed="false">港股</button>
+            <button type="button" data-fund-group="overseas" aria-pressed="false">海外</button>
+          </div>
+        </div>
+        <p class="panel-caption" id="fund-taxonomy-note">载入基金分类...</p>
+        <div class="selector-tools" data-selection-controls="funds"><span>选择标的</span><div><button type="button" data-selection-action="all">全选</button><button type="button" data-selection-action="none">全取消</button></div></div>
+        <div id="fund-selector" class="series-selector dense" aria-label="基金多选"></div>
+        <div class="comparison-toolbar" aria-label="基金图表设置">
+          <div class="comparison-control-group"><span>周期</span><div class="comparison-switch">
+            <button type="button" data-comparison-key="funds" data-comparison-range="5">周</button>
+            <button type="button" data-comparison-key="funds" data-comparison-range="20">月</button>
+            <button type="button" data-comparison-key="funds" data-comparison-range="60" class="active" aria-pressed="true">季</button>
+            <button type="button" data-comparison-key="funds" data-comparison-range="120">半年</button>
+            <button type="button" data-comparison-key="funds" data-comparison-range="250">一年</button>
+            <button type="button" data-comparison-key="funds" data-comparison-range="750">三年</button>
+          </div></div>
+          <div class="comparison-control-group"><span>坐标</span><div class="comparison-switch">
+            <button type="button" data-comparison-key="funds" data-comparison-mode="normalized" class="active" aria-pressed="true">归一化</button>
+            <button type="button" data-comparison-key="funds" data-comparison-mode="actual" disabled>实际值</button>
+          </div></div>
+          <span class="comparison-note" id="funds-comparison-note">多选默认归一化</span>
+        </div>
+        <div class="comparison-chart-wrap large">
+          <svg id="fund-comparison-chart" viewBox="0 0 900 380" role="img" aria-label="基金归一化比较"></svg>
+        </div>
+        <div id="fund-comparison-legend" class="comparison-legend"></div>
+      </section>
+      <section class="panel ranking-panel">
+        <div class="panel-head"><div><p class="section-kicker">PERFORMANCE TABLE</p><h2>当前分类强弱表</h2></div><span class="muted">1 / 5 / 20 个交易日</span></div>
+        <div class="table-wrap"><table><thead><tr><th>名称</th><th>代码</th><th>1日</th><th>5日</th><th>20日</th><th>数据日</th></tr></thead><tbody id="fund-ranking-rows"></tbody></table></div>
+      </section>
+      <section class="panel etf-panel fund-proxy-panel" aria-labelledby="tradable-etf-title">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">TRADABLE PROXIES</p>
+            <h2 id="tradable-etf-title">可交易 ETF 代理</h2>
+          </div>
+          <div class="range-switch" aria-label="ETF 代理涨跌周期">
+            <button type="button" data-etf-period="1" class="active" aria-pressed="true">1日</button>
+            <button type="button" data-etf-period="5">5日</button>
+            <button type="button" data-etf-period="20">20日</button>
+          </div>
+        </div>
+        <p class="panel-caption">用于快速观察宽基风格与行业交易载体，不作为官方行业指数。</p>
+        <div class="benchmark-strip" id="broad-etf-grid" aria-label="宽基风格 ETF"></div>
+        <div class="sector-grid" id="industry-etf-grid" aria-label="行业主题 ETF"></div>
+        <div class="sector-foot">
+          <span id="sector-leaders">ETF 强弱排序载入中</span>
+          <span>ETF 代理 · 非官方行业指数</span>
+        </div>
+      </section>
+    </section>
+
+    <section id="boards-page" class="page-view comparison-page" aria-labelledby="boards-title">
+      <section class="comparison-hero fund-hero">
+        <div>
+          <p class="section-kicker">BOARD RADAR / RELATIVE STRENGTH</p>
+          <h2 id="boards-title">板块总览，归一化找低位</h2>
+          <p class="hero-note">养基宝 80 个基金主题板块：同花顺板块指数 + 腾讯宽基指数 + 新浪北证50。纵轴统一从 100 起步做归一化，曲线越低代表相对更便宜，适合抄底观察；基金类型板块无对应行情显示 --。</p>
+        </div>
+        <div class="universe-count"><strong id="board-available-count">--</strong><span>AVAILABLE BOARDS</span></div>
+      </section>
+      <section class="panel universe-panel">
+        <div class="panel-head universe-head">
+          <div><p class="section-kicker">SELECT &amp; COMPARE</p><h2>板块多选比较</h2></div>
+          <div class="universe-actions">
+            <div class="universe-tabs" aria-label="板块分类">
+              <button type="button" data-board-group="theme" class="active" aria-pressed="true">主题概念</button>
+              <button type="button" data-board-group="index" aria-pressed="false">宽基指数</button>
+              <button type="button" data-board-group="fundtype" aria-pressed="false">基金类型</button>
+            </div>
+            <button type="button" id="open-board-ranking" class="ranking-trigger">主题排名</button>
+          </div>
+        </div>
+        <p class="panel-caption" id="board-taxonomy-note">载入板块...</p>
+        <div class="selector-tools" data-selection-controls="boards"><span>选择板块</span><div><button type="button" data-selection-action="all">全选</button><button type="button" data-selection-action="none">全取消</button></div></div>
+        <div id="board-selector" class="series-selector dense" aria-label="板块多选"></div>
+        <div class="comparison-toolbar" aria-label="板块图表设置">
+          <div class="comparison-control-group"><span>周期</span><div class="comparison-switch">
+            <button type="button" data-comparison-key="boards" data-comparison-range="20">月</button>
+            <button type="button" data-comparison-key="boards" data-comparison-range="60" class="active" aria-pressed="true">季</button>
+            <button type="button" data-comparison-key="boards" data-comparison-range="120">半年</button>
+            <button type="button" data-comparison-key="boards" data-comparison-range="250">一年</button>
+          </div></div>
+          <div class="comparison-control-group"><span>坐标</span><div class="comparison-switch">
+            <button type="button" data-comparison-key="boards" data-comparison-mode="normalized" class="active" aria-pressed="true">归一化</button>
+            <button type="button" data-comparison-key="boards" data-comparison-mode="actual">实际值</button>
+          </div></div>
+          <span class="comparison-note" id="boards-comparison-note">多选默认归一化，纵轴越低越便宜</span>
+        </div>
+        <div class="comparison-chart-wrap large">
+          <svg id="board-comparison-chart" viewBox="0 0 900 380" role="img" aria-label="板块归一化比较"></svg>
+        </div>
+        <div id="board-comparison-legend" class="comparison-legend"></div>
+      </section>
+      <section class="panel ranking-panel">
+        <div class="panel-head"><div><p class="section-kicker">BOARD TABLE</p><h2>板块强弱表</h2></div><span class="muted">1 / 5 / 20 个交易日</span></div>
+        <div class="table-wrap"><table><thead><tr><th>名称</th><th>代码</th><th>1日</th><th>5日</th><th>20日</th><th>数据日</th></tr></thead><tbody id="board-ranking-rows"></tbody></table></div>
+      </section>
+    </section>
+
+    <section id="futures-page" class="page-view" aria-labelledby="futures-title" hidden>
+      <p class="section-kicker">FUTURES</p>
+      <h2 id="futures-title">期货</h2>
+      <p class="hero-description">本页面未复刻（占位）。当前版本仅实现「基金情况」页完整功能。</p>
+    </section>
+
+    <section id="value-page" class="page-view" aria-labelledby="value-title" hidden>
+      <p class="section-kicker">VALUE</p>
+      <h2 id="value-title">跟踪标的</h2>
+      <p class="hero-description">本页面未复刻（占位）。当前版本仅实现「基金情况」页完整功能。</p>
+    </section>
+
+    <section id="observe-page" class="page-view" aria-labelledby="observe-title" hidden>
+      <p class="section-kicker">OBSERVE</p>
+      <h2 id="observe-title">观察列表</h2>
+      <p class="hero-description">本页面未复刻（占位）。当前版本仅实现「基金情况」页完整功能。</p>
+    </section>
+
+    <section id="realtime-page" class="page-view" aria-labelledby="realtime-title" hidden>
+      <p class="section-kicker">REALTIME</p>
+      <h2 id="realtime-title">实时行情</h2>
+      <p class="hero-description">本页面未复刻（占位）。当前版本仅实现「基金情况」页完整功能。</p>
+    </section>
+
+<footer>
+      <span id="coverage-note">数据覆盖检查中</span>
+      <span>只读采集 · 不含账户凭证 · 不构成投资建议</span>
+    </footer>
+  </div>
+
+  <div id="load-error" class="load-error" role="alert" hidden>
+    <strong>数据暂时无法读取</strong>
+    <span>请检查最新快照是否已成功发布。</span>
+  </div>
+  <div id="sync-status" class="sync-status" role="status" aria-live="polite" hidden>
+    <div>
+      <strong id="sync-status-title">数据同步提示</strong>
+      <span id="sync-status-message"></span>
+    </div>
+    <button type="button" id="dismiss-sync-status" aria-label="关闭提示">×</button>
+  </div>
+
+  <dialog id="board-ranking-dialog" class="board-ranking-dialog" aria-labelledby="board-ranking-title">
+    <button type="button" class="dialog-close" id="close-board-ranking" aria-label="关闭主题排名">×</button>
+    <p class="section-kicker">THEME CONCEPT RANKING</p>
+    <div class="ranking-dialog-head">
+      <div>
+        <h2 id="board-ranking-title">主题概念排名</h2>
+        <p id="board-ranking-period">按当前周期归一化 · 数值越低越靠前</p>
+      </div>
+      <strong id="board-ranking-count">--</strong>
+    </div>
+    <div id="board-ranking-list" class="board-ranking-list" role="list"></div>
+  </dialog>
+  <script src="assets/config.js?v=1"></script>
+  <script src="assets/app.js?v=24" defer></script>
+</body>
+</html>

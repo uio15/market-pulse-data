@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+unpackage/
+*.jks
+*.keystore
+mitmproxy-*
+.DS_Store
+Thumbs.db

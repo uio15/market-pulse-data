@@ -1,0 +1,562 @@
+[
+ {
+  "name": "AI应用",
+  "fund_count": 21,
+  "match": "EXACT",
+  "ths_name": "AI应用",
+  "ths_code": 886108
+ },
+ {
+  "name": "云计算",
+  "fund_count": 13,
+  "match": "EXACT",
+  "ths_name": "云计算",
+  "ths_code": 885362
+ },
+ {
+  "name": "人工智能",
+  "fund_count": 29,
+  "match": "EXACT",
+  "ths_name": "人工智能",
+  "ths_code": 885728
+ },
+ {
+  "name": "PCB",
+  "fund_count": 16,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "商业航天",
+  "fund_count": 10,
+  "match": "EXACT",
+  "ths_name": "商业航天",
+  "ths_code": 886078
+ },
+ {
+  "name": "微盘股",
+  "fund_count": 25,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "军工",
+  "fund_count": 20,
+  "match": "EXACT",
+  "ths_name": "军工",
+  "ths_code": 885700
+ },
+ {
+  "name": "可控核聚变",
+  "fund_count": 6,
+  "match": "EXACT",
+  "ths_name": "可控核聚变",
+  "ths_code": 886065
+ },
+ {
+  "name": "中证500",
+  "fund_count": 78,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "固态电池",
+  "fund_count": 16,
+  "match": "EXACT",
+  "ths_name": "固态电池",
+  "ths_code": 886032
+ },
+ {
+  "name": "存储芯片",
+  "fund_count": 8,
+  "match": "EXACT",
+  "ths_name": "存储芯片",
+  "ths_code": 886042
+ },
+ {
+  "name": "稀土永磁",
+  "fund_count": 7,
+  "match": "EXACT",
+  "ths_name": "稀土永磁",
+  "ths_code": 885343
+ },
+ {
+  "name": "创新药",
+  "fund_count": 33,
+  "match": "EXACT",
+  "ths_name": "创新药",
+  "ths_code": 886015
+ },
+ {
+  "name": "新能源",
+  "fund_count": 45,
+  "match": "SUB",
+  "ths_name": "新能源汽车",
+  "ths_code": 885431
+ },
+ {
+  "name": "汽车整车",
+  "fund_count": 5,
+  "match": "EXACT",
+  "ths_name": "汽车整车",
+  "ths_code": 881125
+ },
+ {
+  "name": "油气资源",
+  "fund_count": 10,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "白酒",
+  "fund_count": 9,
+  "match": "EXACT",
+  "ths_name": "白酒",
+  "ths_code": 881273
+ },
+ {
+  "name": "MLCC",
+  "fund_count": 7,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "机器人",
+  "fund_count": 23,
+  "match": "SUB",
+  "ths_name": "机器人概念",
+  "ths_code": 885517
+ },
+ {
+  "name": "通信",
+  "fund_count": 29,
+  "match": "SUB",
+  "ths_name": "通信设备",
+  "ths_code": 881129
+ },
+ {
+  "name": "半导体",
+  "fund_count": 47,
+  "match": "EXACT",
+  "ths_name": "半导体",
+  "ths_code": 881121
+ },
+ {
+  "name": "消费电子",
+  "fund_count": 24,
+  "match": "EXACT",
+  "ths_name": "消费电子",
+  "ths_code": 881124
+ },
+ {
+  "name": "电网设备",
+  "fund_count": 11,
+  "match": "EXACT",
+  "ths_name": "电网设备",
+  "ths_code": 881278
+ },
+ {
+  "name": "有色金属",
+  "fund_count": 33,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "工程机械",
+  "fund_count": 9,
+  "match": "EXACT",
+  "ths_name": "工程机械",
+  "ths_code": 881268
+ },
+ {
+  "name": "交通运输",
+  "fund_count": 8,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "家用电器",
+  "fund_count": 8,
+  "match": "EXACT",
+  "ths_name": "家用电器",
+  "ths_code": 885543
+ },
+ {
+  "name": "黄金",
+  "fund_count": 15,
+  "match": "SUB",
+  "ths_name": "黄金概念",
+  "ths_code": 885530
+ },
+ {
+  "name": "黄金股",
+  "fund_count": 8,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "煤炭",
+  "fund_count": 8,
+  "match": "SUB",
+  "ths_name": "煤炭概念",
+  "ths_code": 885914
+ },
+ {
+  "name": "电力",
+  "fund_count": 11,
+  "match": "EXACT",
+  "ths_name": "电力",
+  "ths_code": 881145
+ },
+ {
+  "name": "农林牧渔",
+  "fund_count": 12,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "钢铁",
+  "fund_count": 3,
+  "match": "EXACT",
+  "ths_name": "钢铁",
+  "ths_code": 881112
+ },
+ {
+  "name": "食品饮料",
+  "fund_count": 9,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "房地产",
+  "fund_count": 18,
+  "match": "EXACT",
+  "ths_name": "房地产",
+  "ths_code": 881153
+ },
+ {
+  "name": "银行",
+  "fund_count": 13,
+  "match": "EXACT",
+  "ths_name": "银行",
+  "ths_code": 881155
+ },
+ {
+  "name": "传媒游戏",
+  "fund_count": 9,
+  "match": "SUB",
+  "ths_name": "游戏",
+  "ths_code": 881275
+ },
+ {
+  "name": "证券保险",
+  "fund_count": 29,
+  "match": "SUB",
+  "ths_name": "保险",
+  "ths_code": 881156
+ },
+ {
+  "name": "半导体材料设备",
+  "fund_count": 43,
+  "match": "SUB",
+  "ths_name": "半导体",
+  "ths_code": 881121
+ },
+ {
+  "name": "CPO",
+  "fund_count": 60,
+  "match": "SUB",
+  "ths_name": "共封装光学(CPO)",
+  "ths_code": 886033
+ },
+ {
+  "name": "科创板",
+  "fund_count": 32,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "先进制造",
+  "fund_count": 15,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "创业板",
+  "fund_count": 29,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "光伏",
+  "fund_count": 24,
+  "match": "SUB",
+  "ths_name": "光伏概念",
+  "ths_code": 885531
+ },
+ {
+  "name": "锂矿",
+  "fund_count": 7,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "红利",
+  "fund_count": 26,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "上证50",
+  "fund_count": 11,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "基建",
+  "fund_count": 7,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "养老产业",
+  "fund_count": 6,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "金融科技",
+  "fund_count": 9,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "脑机接口",
+  "fund_count": 7,
+  "match": "EXACT",
+  "ths_name": "脑机接口",
+  "ths_code": 886047
+ },
+ {
+  "name": "算力租赁",
+  "fund_count": 5,
+  "match": "EXACT",
+  "ths_name": "算力租赁",
+  "ths_code": 886050
+ },
+ {
+  "name": "国产算力",
+  "fund_count": 12,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "医药",
+  "fund_count": 27,
+  "match": "SUB",
+  "ths_name": "医药电商",
+  "ths_code": 885661
+ },
+ {
+  "name": "消费",
+  "fund_count": 40,
+  "match": "SUB",
+  "ths_name": "消费电子",
+  "ths_code": 881124
+ },
+ {
+  "name": "医疗",
+  "fund_count": 35,
+  "match": "SUB",
+  "ths_name": "智能医疗",
+  "ths_code": 885402
+ },
+ {
+  "name": "港创新药",
+  "fund_count": 57,
+  "match": "SUB",
+  "ths_name": "创新药",
+  "ths_code": 886015
+ },
+ {
+  "name": "小微盘量化",
+  "fund_count": 23,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "储能",
+  "fund_count": 10,
+  "match": "EXACT",
+  "ths_name": "储能",
+  "ths_code": 885921
+ },
+ {
+  "name": "化工",
+  "fund_count": 16,
+  "match": "SUB",
+  "ths_name": "磷化工",
+  "ths_code": 885863
+ },
+ {
+  "name": "恒生",
+  "fund_count": 15,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "恒生科技",
+  "fund_count": 35,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "标普",
+  "fund_count": 10,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "沪深300",
+  "fund_count": 16,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "北证",
+  "fund_count": 34,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "双创50",
+  "fund_count": 13,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "可转债",
+  "fund_count": 14,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "大科技",
+  "fund_count": 62,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "量化",
+  "fund_count": 30,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "现金流",
+  "fund_count": 7,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "亚太",
+  "fund_count": 6,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "蓝筹",
+  "fund_count": 26,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "海外医药",
+  "fund_count": 8,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "沪港深消费",
+  "fund_count": 19,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "港股互联",
+  "fund_count": 8,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "港股红利",
+  "fund_count": 28,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "红利低波",
+  "fund_count": 18,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "混债",
+  "fund_count": 38,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "债基",
+  "fund_count": 61,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ },
+ {
+  "name": "货币基金",
+  "fund_count": 55,
+  "match": "NONE",
+  "ths_name": null,
+  "ths_code": null
+ }
+]
