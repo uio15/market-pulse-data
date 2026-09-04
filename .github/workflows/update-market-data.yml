@@ -2,8 +2,8 @@ name: Update market data
 
 on:
   schedule:
-    # 北京时间每个工作日 16:00（UTC 08:00）更新收盘数据。
-    - cron: "0 8 * * 1-5"
+    # 北京时间每个工作日 08:00（UTC 00:00）更新行情数据。
+    - cron: "0 0 * * 1-5"
   workflow_dispatch:
 
 permissions:
