@@ -5,7 +5,7 @@ cn-marketdata.com #funds 页面 复刻数据抓取脚本
 数据源：腾讯公开行情接口（K线 + 实时快照），不含任何 cn-marketdata 数据。
 用法：python fetch_data.py  → 生成 data/latest.json
 """
-import urllib.request, urllib.parse, json, time, datetime, sys, os
+import urllib.request, urllib.parse, json, time, datetime, sys, os, math, tempfile
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -106,6 +106,55 @@ ETF_PROXIES = [
 
 START = "2022-07-01"          # 留足 3 年
 END = "2099-12-31"
+
+CHINA_TZ = datetime.timezone(datetime.timedelta(hours=8))
+
+def normalize_date(value):
+    """统一同花顺紧凑日期、腾讯日期和新浪时间戳。"""
+    value = str(value)
+    if len(value) >= 8 and value[:8].isdigit():
+        value = f"{value[:4]}-{value[4:6]}-{value[6:8]}"
+    return datetime.date.fromisoformat(value[:10]).isoformat()
+
+def close_cutoff(now=None, code=""):
+    """按北京时间过滤盘中日线；给境内/港股收盘后各留一小时。"""
+    now = (now or datetime.datetime.now(CHINA_TZ)).astimezone(CHINA_TZ)
+    cutoff = now.date()
+    close_hour = 17 if code.lower().startswith("hk") else 16
+    # 美国交易日按当地日期记录，北京时间当天一律不纳入。
+    if code.lower().startswith("us") or now.hour < close_hour:
+        cutoff -= datetime.timedelta(days=1)
+    return cutoff.isoformat()
+
+def completed_rows(rows, cutoff, close_index=2):
+    """只保留已收盘的有效记录，按标准日期排序并去重。"""
+    by_date = {}
+    for row in rows or []:
+        try:
+            date = normalize_date(row[0])
+            close = float(row[close_index])
+            if date <= cutoff and math.isfinite(close) and close > 0:
+                by_date[date] = [date, *row[1:]]
+        except (ValueError, TypeError, IndexError):
+            continue
+    return [by_date[date] for date in sorted(by_date)]
+
+def snapshot_quality(funds, proxies, boards, expected_date):
+    """以境内基准指数已收盘日线校验，避免把周末或节假日当成缺数。"""
+    stale = []
+    for group, items in (("funds", funds), ("etf_proxies", proxies), ("boards", boards)):
+        for item in items:
+            code = item.get("code", "")
+            if group == "boards" and (not code or code.lower().startswith(("hk", "us"))):
+                continue
+            if item.get("latest_date") != expected_date:
+                stale.append({"group": group, "id": item["id"],
+                              "latest_date": item.get("latest_date"),
+                              "expected_date": expected_date})
+    # 基金/ETF 是快照核心，缺数时失败退出，保留已有文件供客户端继续使用。
+    if any(item["group"] != "boards" for item in stale):
+        raise RuntimeError(f"基金/ETF 收盘数据未齐，预期 {expected_date}：{stale}")
+    return stale
 
 def fetch_kline(code):
     """腾讯前复权日K：返回 [[date, open, close, high, low, volume], ...]"""
@@ -209,7 +258,7 @@ def fetch_sina_index(code):
         print(f"  [sina-parse] {code}: {e}", flush=True)
         return None
 
-def build_board_items():
+def build_board_items(now=None):
     """养基宝80个基金主题板块：同花顺板块/腾讯指数/新浪指数 日K"""
     items = []
     for bid, name, fc, src, code, note in EM_BOARDS:
@@ -227,7 +276,7 @@ def build_board_items():
             pts = fetch_sina_index(code)
         else:
             pts = fetch_index_kline(code)
-        pts = [p for p in (pts or []) if p[1] > 0]
+        pts = completed_rows(pts, close_cutoff(now, code), close_index=1)
         if not pts:
             print(f"  [FAIL] board {name}({src}:{code}) kline failed", flush=True)
             items.append({"id": bid, "name": name, "code": code, "fund_count": fc,
@@ -251,13 +300,11 @@ def build_board_items():
         time.sleep(0.15)
     return items
 
-def build_fund_items():
+def build_fund_items(now=None):
     items = []
-    codes = [tq_code(c) for _, _, c, _ in FUNDS]
-    quotes = fetch_quote(codes)  # 一次批量拉实时
     for fid, name, code, group in FUNDS:
         tq = tq_code(code)
-        day = fetch_kline(tq)
+        day = completed_rows(fetch_kline(tq), close_cutoff(now, tq))
         if not day:
             print(f"  [FAIL] {name}({code}) kline failed", flush=True)
             items.append({"id": fid, "name": name, "code": code, "group": group,
@@ -269,17 +316,7 @@ def build_fund_items():
         points = [p for p in points if p[1] > 0]
         latest = points[-1][1] if points else None
         latest_date = points[-1][0] if points else None
-        q = quotes.get(tq)
-        if q and len(q) > 37 and q[3]:
-            try:
-                latest = float(q[3])
-                if len(q) > 30 and len(q[30]) >= 8 and q[30][:8].isdigit():
-                    ts = q[30][:8]
-                    latest_date = f"{ts[:4]}-{ts[4:6]}-{ts[6:8]}"
-                elif len(q) > 30 and q[30]:
-                    latest_date = q[30][:10]
-            except ValueError:
-                pass
+        # 收盘价、日期、曲线与涨跌幅共用同一组日线，禁止实时行情覆盖。
         items.append({
             "id": fid, "name": name, "code": code, "group": group,
             "region": "境内" if group == "a_share_industry" else ("港股" if group == "hong_kong" else "海外"),
@@ -298,34 +335,39 @@ def build_fund_items():
         time.sleep(0.15)
     return items
 
-def build_proxy_items():
+def build_proxy_items(now=None):
     items = []
     codes = [tq_code(c) for _, _, c, _ in ETF_PROXIES]
     quotes = fetch_quote(codes)
     # 沪深300 5日涨幅，用于 relative_to_csi300_5d_pct
-    csi300_day = fetch_kline('sh510300')
+    csi300_day = completed_rows(fetch_kline('sh510300'), close_cutoff(now))
     csi300_pts = [[r[0], float(r[2])] for r in csi300_day] if csi300_day else []
-    csi300_5d = pct_change(csi300_pts, 5) or 0
+    csi300_5d = pct_change(csi300_pts, 5)
     for pid, name, code, group in ETF_PROXIES:
         tq = tq_code(code)
-        day = fetch_kline(tq)
+        day = completed_rows(fetch_kline(tq), close_cutoff(now, tq))
         if not day:
             print(f"  [FAIL] proxy {name}({code}) kline failed", flush=True)
             items.append({"id": pid, "name": name, "code": code, "group": group,
-                          "close": None, "amount": None, "change_1d_pct": None,
+                          "close": None, "latest_date": None, "amount": None, "change_1d_pct": None,
                           "change_5d_pct": None, "relative_to_csi300_5d_pct": None})
             continue
         pts = [[r[0], float(r[2])] for r in day]
         pts = [p for p in pts if p[1] > 0]
         close = pts[-1][1] if pts else None
+        latest_date = pts[-1][0] if pts else None
         amount = None
         q = quotes.get(tq)
         if q and len(q) > 37:
             try:
-                if q[3]: close = float(q[3])
-                # 字段37=成交额(元)  字段6=成交量(手)
-                if q[37] and q[37] != '': amount = float(q[37]) * 10000  # 腾讯接口成交额单位=万元
-            except ValueError:
+                # 成交额只在快照与已收盘日线同日、且快照已过收盘时使用。
+                quote_time = str(q[30])
+                quote_closed = len(quote_time) >= 14 and quote_time[8:14] >= "150000"
+                if normalize_date(quote_time) == latest_date and quote_closed and q[37]:
+                    amount = float(q[37]) * 10000  # 腾讯接口成交额单位=万元
+                    if not math.isfinite(amount) or amount < 0:
+                        amount = None
+            except (ValueError, TypeError):
                 pass
         if amount is None and close:
             # 兜底：K线最后一天 量(手)*100*close
@@ -336,10 +378,11 @@ def build_proxy_items():
         ch5 = pct_change(pts, 5)
         items.append({
             "id": pid, "name": name, "code": code, "group": group,
-            "latest": None, "status": None,
+            "latest": close, "latest_date": latest_date, "status": "ok",
             "change_1d_pct": pct_change(pts, 1),
             "change_5d_pct": ch5,
-            "relative_to_csi300_5d_pct": round(ch5 - csi300_5d, 4) if ch5 is not None else None,
+            "relative_to_csi300_5d_pct": round(ch5 - csi300_5d, 4)
+                if ch5 is not None and csi300_5d is not None and csi300_pts[-1][0] == latest_date else None,
             "amount": amount, "close": close,
         })
         print(f"  ✓ proxy {name} {code}: close={close} amount={amount}", flush=True)
@@ -347,25 +390,34 @@ def build_proxy_items():
     return items
 
 def main():
+    # 整次抓取固定一个时间截点，避免跨收盘时刻混入不同交易日。
+    started_at = datetime.datetime.now(CHINA_TZ)
+    reference = completed_rows(fetch_index_kline("sh000001"),
+                               close_cutoff(started_at), close_index=1)
+    if not reference:
+        raise RuntimeError("无法获取境内基准指数的已收盘日期，保留旧快照")
+    expected_date = reference[-1][0]
     print("== 抓取 39 基金系列 ==", flush=True)
-    fund_items = build_fund_items()
+    fund_items = build_fund_items(started_at)
     print("== 抓取 17 ETF 代理 ==", flush=True)
-    proxy_items = build_proxy_items()
+    proxy_items = build_proxy_items(started_at)
     print("== 抓取 80 养基宝板块(同花顺板块+腾讯指数) ==", flush=True)
-    board_items = build_board_items()
+    board_items = build_board_items(started_at)
 
     ok = [i for i in fund_items if i.get("status") == "ok"]
-    now = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
-    as_of = fund_items[0]["latest_date"] if fund_items and fund_items[0]["latest_date"] else datetime.date.today().isoformat()
-
-    # 用数据最新日期统一 as_of
-    dates = [i["latest_date"] for i in fund_items if i.get("latest_date")]
-    if dates: as_of = max(dates)
+    stale = snapshot_quality(fund_items, proxy_items, board_items, expected_date)
+    now = datetime.datetime.now(CHINA_TZ).isoformat(timespec="seconds")
+    as_of = expected_date
+    for item in board_items:
+        if any(entry["id"] == item["id"] for entry in stale):
+            item["quality_note"] = f"行情未齐：实际 {item.get('latest_date') or '缺失'}，境内基准收盘日 {expected_date}"
+            print(f"[警告] {item['name']}：{item['quality_note']}", flush=True)
 
     payload = {
         "schema": "compass-market-dashboard.v9",
         "generated_at": now,
         "as_of": as_of,
+        "as_of_scope": "funds_and_etf_proxies",
         "source": {
             "provider": "Tencent public market data",
             "scope": "A-share ETF daily kline with HK/overseas ETFs",
@@ -376,7 +428,9 @@ def main():
             "named_series": len(fund_items),
             "readable_series": len(ok),
             "catalog_only_series": len(fund_items) - len(ok),
-            "note": "OHLCV 结构已验证；数据来自腾讯公开接口。",
+            "expected_date": expected_date,
+            "stale_series": stale,
+            "note": "基金/ETF 使用一致的已收盘日线；各板块以自身 latest_date 为准。",
         },
         "summary": {
             "fundamentals_available_count": len(ok),
@@ -402,8 +456,27 @@ def main():
         },
     }
     out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "latest.json")
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+    if os.path.exists(out_path):
+        with open(out_path, encoding="utf-8") as f:
+            previous = json.load(f)
+        # 旧版元数据曾被实时行情覆盖，用实际基金曲线判断是否倒退。
+        previous_dates = [normalize_date(item["points"][-1][0])
+                          for item in previous.get("comparison_universes", {}).get("funds", {}).get("items", [])
+                          if item.get("points")]
+        if previous_dates and as_of < max(previous_dates):
+            raise RuntimeError("新快照交易日早于已有基金日线，拒绝覆盖")
+    # 原子替换，抓取/序列化失败时不会留下半个 JSON 文件。
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    temp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=os.path.dirname(out_path),
+                                         suffix=".tmp", delete=False) as f:
+            temp_path = f.name
+            json.dump(payload, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+        os.replace(temp_path, out_path)
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            os.remove(temp_path)
     print(f"\n完成: {out_path} ({os.path.getsize(out_path)}B) as_of={as_of} ok={len(ok)}/{len(fund_items)}")
 
 if __name__ == "__main__":

@@ -2,8 +2,10 @@ name: Update market data
 
 on:
   schedule:
-    # 北京时间每个工作日 08:00（UTC 00:00）更新行情数据。
-    - cron: "0 0 * * 1-5"
+    # 北京时间工作日 18:23、22:23 收盘后抓取，错开整点拥堵。
+    - cron: "23 10,14 * * 1-5"
+    # 北京时间周二至周六 07:23 补抓上一个交易日，覆盖周五收盘。
+    - cron: "23 23 * * 1-5"
   workflow_dispatch:
 
 permissions:
